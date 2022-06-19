@@ -1,0 +1,73 @@
+
+---
+title: "ANA 515 Assignment 2"
+author: Hao Li
+date: 6/19/2022
+output: html_document
+---
+
+
+```{r setup, include = FALSE}
+library(package='dplyr')
+library(package='knitr')
+```
+
+# This dataset is called ADAE, which is a clinical adverse events dataset. This dataset is designed to collect the information of subjects who have adverse events during the whole clincal study. Moreover, the dataset is followed by CDISC standards (Clinical Data Interchange Standards Consortium).As for research questions, I want to know that what percentage of adverse events are caused by our study medication. The dataset is saved as XPT. format and it is fixed width if it is in a flat file. If it is binary, I would use Linux to open it. 
+
+
+###section2
+```{r, echo = TRUE}
+library(foreign)
+XPT<-read.xport("C:/Users/12052/Downloads/adae.XPT")
+write.csv(XPT,"C:/Users/12052/Downloads/adae.csv")
+
+adae<-read.csv("C:/Users/12052/Downloads/adae.csv")
+
+```
+#I selected read function to make my dataset readable by R, after transferring its format from XPT to CSV, then I gave the dataset a name as ADAE. the Package I used is foreign, which can help users easily transfer datasets in different format to be readable. 
+
+###section3
+```{r, echo = TRUE}
+adae2<-adae %>% 
+subset(AGE>85)%>%
+select(USUBJID, TRTA, SEX, AGE, RACE, TRTSDT,TRTEDT, AESEV)%>%
+rename(gender=SEX)%>%
+filter(gender=='M')%>%
+print ()
+```
+
+###section4
+
+```{r, echo =TRUE}
+n_1 <-nrow(adae2)
+n_2 <-ncol(adae2)
+```
+This dataframe has `r n_1` rows and `r n_2` columns. The names of the columns and a brief description of each are in the table below:
+
+```{r, echo = TRUE}
+COLUMN<-c('USUBJID','TRTA','GENDER','AGE','RACE','TRTSDT','TRTEDT','AESEV')
+DESCRIPTION<-c("SUBJECT ID NUMBER","ADMINISTRATE MEDICATION","GENDER","AGE","ETHNIC","TREATMENT START DATE","TREATMENT END DATE",
+               "ADVERSE EVENTS SEVERITY LEVEL")
+TABLE<-data.frame(COLUMN,DESCRIPTION)
+knitr::kable(TABLE, COL.NAME=c("COLUMN","DESCRIPTION"))
+  
+```
+
+###section5
+
+```{r, echo = TRUE}
+adae3<-adae2 %>%
+select(AGE,TRTSDT,TRTEDT)
+summary (adae3)
+# missing values
+sapply(adae3, function(x) sum(is.na(x)))
+```
+
+###summary
+```{r,echo= TRUE}
+sum1<-summary(adae3) 
+sum2<-sapply(adae3, function(x) sum(is.na(x)))
+```
+
+
+
